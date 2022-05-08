@@ -61,6 +61,7 @@ class WebViewActivity: AppCompatActivity()  {
                 favoriteImageView2.apply {
                     setImageResource(if (isFavorite) R.drawable.ic_star_border else R.drawable.ic_star) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
                 }
+                isFavorite = !isFavorite
             }
 
         }
