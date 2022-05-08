@@ -6,12 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayoutMediator
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_web_view.*
 
 class WebViewActivity: AppCompatActivity()  {
@@ -28,6 +22,7 @@ class WebViewActivity: AppCompatActivity()  {
     var favoriteShop = FavoriteShop()
     var isFavorite = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
@@ -36,12 +31,49 @@ class WebViewActivity: AppCompatActivity()  {
         webView.loadUrl(favoriteShop.url)
         isFavorite = FavoriteShop.findBy(favoriteShop.id) != null
 
+        if (favoriteShop.id != null){
+            favoriteImageView2.apply {
+                setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_border) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
+            }
+
+
+
         favoriteImageView2.setOnClickListener {
-            if (isFavorite){
+
+            if (favoriteShop.id != null) {
+
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.delete_favorite_dialog_title)
+                    .setMessage(R.string.delete_favorite_dialog_message)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        FavoriteShop.delete(favoriteShop.id)
+                        favoriteImageView2.apply {
+                            setImageResource(if (!isFavorite) R.drawable.ic_star else R.drawable.ic_star_border) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
+                            Log.d("android", "delete")
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                    .create()
+                    .show()
+
+
+            } else {
+                FavoriteShop.insert(favoriteShop)
+                Log.d("android", "insert")
+                favoriteImageView2.apply {
+                    setImageResource(if (isFavorite) R.drawable.ic_star_border else R.drawable.ic_star) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
+                }
+            }
+
+        }
+
+/*Log.d("android","qqqqq")
+            if (isFavorite != null){
                 FavoriteShop.insert(favoriteShop)
             }else{
                 FavoriteShop.delete(favoriteShop.id)
-            }
+            }*/
+
         }
     }
 
@@ -51,27 +83,28 @@ class WebViewActivity: AppCompatActivity()  {
         private const val VIEW_PAGER_POSITION_API = 0
         private const val VIEW_PAGER_POSITION_FAVORITE = 1
         fun start(activity: Activity, url: String) {
-            activity.startActivity(Intent(activity, WebViewActivity::class.java).putExtra(KEY_URL, url))
+            activity.startActivity(
+                Intent(activity, WebViewActivity::class.java).putExtra(
+                    KEY_URL,
+                    url
+                )
+            )
         }
         fun start(activity: Activity, favoriteShop: FavoriteShop) {
-            activity.startActivity(Intent(activity, WebViewActivity::class.java).putExtra(KEY_FAVORITE_SHOP, favoriteShop))
+            activity.startActivity(
+                Intent(activity, WebViewActivity::class.java).putExtra(
+                    KEY_FAVORITE_SHOP,
+                    favoriteShop
+                )
+            )
         }
     }
 
 
+    override fun onBackPressed() {
 
-
-    private fun showConfirmDeleteFavoriteDialog(id: String) {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.delete_favorite_dialog_title)
-            .setMessage(R.string.delete_favorite_dialog_message)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                deleteFavorite(id)
-            }
-            .setNegativeButton(android.R.string.cancel) { _, _ ->}
-            .create()
-            .show()
     }
+
 
     private fun deleteFavorite(id: String) {
         FavoriteShop.delete(id)
