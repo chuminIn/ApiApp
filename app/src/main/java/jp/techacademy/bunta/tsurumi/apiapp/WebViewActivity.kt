@@ -40,26 +40,24 @@ class WebViewActivity: AppCompatActivity()  {
 
         favoriteImageView2.setOnClickListener {
 
-            if (favoriteShop.id != null) {
-
+            if (isFavorite) {
                 AlertDialog.Builder(this)
                     .setTitle(R.string.delete_favorite_dialog_title)
                     .setMessage(R.string.delete_favorite_dialog_message)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         FavoriteShop.delete(favoriteShop.id)
+                        isFavorite = !isFavorite
                         favoriteImageView2.apply {
-                            setImageResource(if (!isFavorite) R.drawable.ic_star else R.drawable.ic_star_border) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
-                            Log.d("android", "delete")
+                            setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_border) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
+                            Log.d("android", "deleteeeeeeeeeeeeeeeeeeeeeeeeeee")
                         }
                     }
                     .setNegativeButton(android.R.string.cancel) { _, _ -> }
                     .create()
                     .show()
-
-
             } else {
                 FavoriteShop.insert(favoriteShop)
-                Log.d("android", "insert")
+                Log.d("android", "insertttttttttttttttttttttttttt")
                 favoriteImageView2.apply {
                     setImageResource(if (isFavorite) R.drawable.ic_star_border else R.drawable.ic_star) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
                 }
